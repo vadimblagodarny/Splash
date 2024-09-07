@@ -21,6 +21,8 @@ final class FavoritesTabViewController: UIViewController {
         return collectionView
     }()
     
+    private let refreshControl = UIRefreshControl()
+    
     init(viewModel: FavoritesTabViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -50,6 +52,8 @@ final class FavoritesTabViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
         collectionView.register(FavoritePhotoCell.self, forCellWithReuseIdentifier: "FavoritePhotoCell")
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -63,6 +67,12 @@ final class FavoritesTabViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
+    
+    @objc private func handleRefresh() {
+        viewModel.fetchFavoritePhotos()
+        refreshControl.endRefreshing()
+    }
+
 }
 
 extension FavoritesTabViewController: UICollectionViewDelegate, UICollectionViewDataSource {

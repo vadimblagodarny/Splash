@@ -27,6 +27,8 @@ final class RandomTabViewController: UIViewController {
         return collectionView
     }()
     
+    private let refreshControl = UIRefreshControl()
+    
     init(viewModel: RandomTabViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -66,6 +68,8 @@ final class RandomTabViewController: UIViewController {
     
     private func setupViews() {
         view.backgroundColor = .white
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: "PhotoCell")
@@ -80,6 +84,11 @@ final class RandomTabViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
+    }
+    
+    @objc private func handleRefresh() {
+        viewModel.fetchRandomPhotos()
+        refreshControl.endRefreshing()
     }
 }
 
