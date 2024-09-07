@@ -25,7 +25,8 @@ final class FavoritePhotoCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        
+        imageView.backgroundColor = .systemGray5
+
         authorLabel.font = UIFont.systemFont(ofSize: 14)
         authorLabel.textColor = .black
         authorLabel.textAlignment = .center

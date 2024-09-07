@@ -14,27 +14,18 @@ final class PhotoCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 8
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .systemGray5
         return imageView
-    }()
-    
-    private let activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        return activityIndicator
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.addSubview(imageView)
-        contentView.addSubview(activityIndicator)
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
     
@@ -52,7 +43,6 @@ final class PhotoCell: UICollectionViewCell {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let image):
-                    self?.activityIndicator.stopAnimating()
                     self?.imageView.image = image
                 case .failure(let error):
                     print("Failed to load image: \(error.localizedDescription)")

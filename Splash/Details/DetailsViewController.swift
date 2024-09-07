@@ -15,6 +15,14 @@ final class DetailsViewController: UIViewController {
     private let locationLabel = UILabel()
     private let downloadsLabel = UILabel()
     private let favoriteButton = UIButton(type: .system)
+
+    private let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+
     private let viewModel: DetailsViewModelProtocol
     
     init(viewModel: DetailsViewModelProtocol) {
@@ -47,7 +55,8 @@ final class DetailsViewController: UIViewController {
     
     private func addViews() {
         view.addSubview(stackView)
-        
+        view.addSubview(activityIndicator)
+
         [photoImageView,
          authorLabel,
          dateLabel,
@@ -83,7 +92,9 @@ final class DetailsViewController: UIViewController {
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            activityIndicator.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor)
         ])
     }
     
@@ -92,9 +103,11 @@ final class DetailsViewController: UIViewController {
         dateLabel.text = viewModel.formattedDate()
         locationLabel.text = viewModel.locationText()
         downloadsLabel.text = viewModel.downloadsText()
-        
+        activityIndicator.startAnimating()
+
         viewModel.fetchImage { [weak self] image in
             DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 self?.photoImageView.image = image
             }
         }
