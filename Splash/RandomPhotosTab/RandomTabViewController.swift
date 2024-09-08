@@ -7,21 +7,28 @@
 
 import UIKit
 
+private enum Constants {
+    static let cellId = "PhotoCell"
+    static let collectionViewSpacing: CGFloat = 10
+    static let itemsInRow: CGFloat = 3
+    static let searchPlaceholder = "Search..."
+}
+
 final class RandomTabViewController: UIViewController {
     private let viewModel: RandomTabViewModelProtocol
 
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "Search..."
+        searchBar.placeholder = Constants.searchPlaceholder
         return searchBar
     }()
     
     private let collectionView: UICollectionView = {
-        let itemSize = ((UIScreen.main.bounds.width - 40) / 3) - 10
+        let itemSize = ((UIScreen.main.bounds.width - GlobalConstants.Sizes.screenPadding * 2) / Constants.itemsInRow) - Constants.collectionViewSpacing
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = Constants.collectionViewSpacing
+        layout.minimumInteritemSpacing = Constants.collectionViewSpacing
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -72,17 +79,21 @@ final class RandomTabViewController: UIViewController {
         collectionView.refreshControl = refreshControl
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: "PhotoCell")
+        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: Constants.cellId)
         searchBar.delegate = self
         navigationItem.titleView = searchBar
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                                constant: GlobalConstants.Sizes.screenPadding),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                                    constant: GlobalConstants.Sizes.screenPadding),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                     constant: -GlobalConstants.Sizes.screenPadding),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                   constant: -GlobalConstants.Sizes.screenPadding)
         ])
     }
     
@@ -100,7 +111,7 @@ extension RandomTabViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
+        searchBar.text = String()
         searchBar.resignFirstResponder()
         viewModel.fetchRandomPhotos()
     }
@@ -118,7 +129,7 @@ extension RandomTabViewController: UICollectionViewDelegate, UICollectionViewDat
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoCell", for: indexPath) as! PhotoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellId, for: indexPath) as! PhotoCell
         let photo = viewModel.photos.value[indexPath.item]
         cell.configure(with: photo)
         return cell

@@ -7,6 +7,13 @@
 
 import UIKit
 
+private enum Constants {
+    static let authorTitle = "Author"
+    static let favoritesRemoveText = "Remove from Favorites"
+    static let favoritesAddText = "Add to Favorites"
+    static let stackViewSpacing: CGFloat = 10
+}
+
 final class DetailsViewController: UIViewController {
     private let stackView = UIStackView()
     private let photoImageView = UIImageView()
@@ -71,35 +78,39 @@ final class DetailsViewController: UIViewController {
     private func setupViews() {
         view.backgroundColor = .white
         photoImageView.contentMode = .scaleAspectFit
-        authorLabel.font = UIFont.systemFont(ofSize: 16)
+        authorLabel.font = GlobalConstants.Fonts.large
         authorLabel.textColor = .black
-        dateLabel.font = UIFont.systemFont(ofSize: 14)
+        dateLabel.font = GlobalConstants.Fonts.medium
         dateLabel.textColor = .darkGray
-        locationLabel.font = UIFont.systemFont(ofSize: 14)
+        locationLabel.font = GlobalConstants.Fonts.medium
         locationLabel.textColor = .darkGray
-        downloadsLabel.font = UIFont.systemFont(ofSize: 14)
+        downloadsLabel.font = GlobalConstants.Fonts.medium
         downloadsLabel.textColor = .darkGray
         favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
         
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = Constants.stackViewSpacing
         stackView.alignment = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                               constant: GlobalConstants.Sizes.screenPadding),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                constant: -GlobalConstants.Sizes.screenPadding),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                           constant: GlobalConstants.Sizes.screenPadding),
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                              constant: -GlobalConstants.Sizes.screenPadding),
             activityIndicator.centerXAnchor.constraint(equalTo: photoImageView.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor)
         ])
     }
     
     private func configureView() {
-        authorLabel.text = "Author: \(viewModel.photo.user.name)"
+        authorLabel.text = "\(Constants.authorTitle): \(viewModel.photo.user.name)"
         dateLabel.text = viewModel.formattedDate()
         locationLabel.text = viewModel.locationText()
         downloadsLabel.text = viewModel.downloadsText()
@@ -113,11 +124,12 @@ final class DetailsViewController: UIViewController {
         }
     }
     
+    private func updateFavoriteButton(isFavorite: Bool) {
+        favoriteButton.setTitle(isFavorite ? Constants.favoritesRemoveText : Constants.favoritesAddText, for: .normal)
+        favoriteButton.setTitleColor(isFavorite ? .red : .tintColor, for: .normal)
+    }
+
     @objc private func favoriteButtonTapped() {
         viewModel.toggleFavorite()
-    }
-    
-    private func updateFavoriteButton(isFavorite: Bool) {
-        favoriteButton.setTitle(isFavorite ? "Remove from Favorites" : "Add to Favorites", for: .normal)
-    }
+    }    
 }

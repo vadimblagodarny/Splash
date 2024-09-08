@@ -11,7 +11,7 @@ final class PhotoCell: UICollectionViewCell {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 8
+        imageView.layer.cornerRadius = GlobalConstants.Sizes.imageCornerRadius
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .systemGray5
@@ -34,6 +34,7 @@ final class PhotoCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         imageView.image = nil
     }
     

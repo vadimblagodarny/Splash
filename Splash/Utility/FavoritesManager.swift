@@ -7,12 +7,15 @@
 
 import Foundation
 
+private enum Constants {
+    static let favoritesKey = "favoritePhotoIDs"
+}
+
 class FavoritesManager {
     static let shared = FavoritesManager()
-    private let favoritesKey = "favoritePhotoIDs"
     
     func getFavoritePhotoIDs() -> [String] {
-        return UserDefaults.standard.stringArray(forKey: favoritesKey) ?? []
+        return UserDefaults.standard.stringArray(forKey: Constants.favoritesKey) ?? []
     }
     
     func addFavoritePhotoID(_ id: String) {
@@ -33,6 +36,6 @@ class FavoritesManager {
     }
     
     private func saveFavoritePhotoIDs(_ ids: [String]) {
-        UserDefaults.standard.set(ids, forKey: favoritesKey)
+        UserDefaults.standard.set(ids, forKey: Constants.favoritesKey)
     }
 }

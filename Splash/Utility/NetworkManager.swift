@@ -17,7 +17,7 @@ protocol NetworkManagerProtocol {
     )
     
     func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void)
-    func fetchPhoto(byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void)
+    func fetchPhoto(from urlString: String, byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void)
 }
 
 class NetworkManager: NetworkManagerProtocol {
@@ -61,9 +61,7 @@ class NetworkManager: NetworkManagerProtocol {
         }
     }
     
-    func fetchPhoto(byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void) {
-        let urlString = "https://api.unsplash.com/photos/\(id)?client_id=sbEOclMPtGfq1goiFNrbsRqdW7QGu5jmuVWuBBbl5ag"
-        
+    func fetchPhoto(from urlString: String, byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void) {
         AF.request(urlString).responseDecodable(of: UnsplashPhoto.self) { response in
             switch response.result {
             case .success(let photo):

@@ -8,6 +8,14 @@
 import Foundation
 import UIKit
 
+private enum Constants {
+    static let createdTitle = "Created"
+    static let locationTitle = "Location"
+    static let downloadsTitle = "Downloads"
+    static let unknown = "Unknown"
+    static let dateFormatString = "yyyy-MM-dd'T'HH:mm:ssZ"
+}
+
 protocol DetailsViewModelProtocol: AnyObject {
     var photo: UnsplashPhoto { get }
     var isFavorite: Bindable<Bool> { get }
@@ -44,20 +52,20 @@ final class DetailsViewModel: DetailsViewModelProtocol {
     
     func formattedDate() -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.dateFormat = Constants.dateFormatString
         if let date = formatter.date(from: photo.created_at) {
             formatter.dateStyle = .medium
-            return "Created: \(formatter.string(from: date))"
+            return "\(Constants.createdTitle): \(formatter.string(from: date))"
         }
-        return "Created: Unknown"
+        return "\(Constants.createdTitle): \(Constants.unknown)"
     }
     
     func locationText() -> String {
-        return "Location: \(photo.user.location ?? "Unknown")"
+        return "\(Constants.locationTitle): \(photo.user.location ?? "\(Constants.unknown)")"
     }
     
     func downloadsText() -> String {
-        return "Downloads: \(photo.downloads ?? 0)"
+        return "\(Constants.downloadsTitle): \(photo.downloads ?? .zero)"
     }
     
     func toggleFavorite() {

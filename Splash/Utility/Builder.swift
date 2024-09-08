@@ -7,6 +7,11 @@
 
 import UIKit
 
+private enum Constants {
+    static let randomTabVCimage = "photo.fill.on.rectangle.fill"
+    static let favoritesTabVCimage = "star.square.on.square.fill"
+}
+
 class Builder {
     func createTabs() -> UITabBarController {
         let tabBarController = UITabBarController()
@@ -25,7 +30,7 @@ class Builder {
         let networkManager = NetworkManager()
         let viewModel = RandomTabViewModel(networkManager: networkManager)
         let viewController = RandomTabViewController(viewModel: viewModel)
-        viewController.tabBarItem.image = UIImage(systemName: "photo.fill.on.rectangle.fill")
+        viewController.tabBarItem.image = UIImage(systemName: Constants.randomTabVCimage)
         let navController = UINavigationController()
         navController.viewControllers = [viewController]
         return navController
@@ -35,7 +40,7 @@ class Builder {
         let networkManager = NetworkManager()
         let viewModel = FavoritesTabViewModel(networkManager: networkManager)
         let viewController = FavoritesTabViewController(viewModel: viewModel)
-        viewController.tabBarItem.image = UIImage(systemName: "star.square.on.square.fill")
+        viewController.tabBarItem.image = UIImage(systemName: Constants.favoritesTabVCimage)
         let navController = UINavigationController()
         navController.viewControllers = [viewController]
         return navController

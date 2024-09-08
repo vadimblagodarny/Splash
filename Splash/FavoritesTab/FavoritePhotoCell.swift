@@ -10,6 +10,7 @@ import UIKit
 final class FavoritePhotoCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let authorLabel = UILabel()
+    private let authorLabelPadding: CGFloat = 10
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,11 +24,11 @@ final class FavoritePhotoCell: UICollectionViewCell {
     private func setupUI() {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8
+        imageView.layer.cornerRadius = GlobalConstants.Sizes.imageCornerRadius
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.backgroundColor = .systemGray5
 
-        authorLabel.font = UIFont.systemFont(ofSize: 14)
+        authorLabel.font = GlobalConstants.Fonts.medium
         authorLabel.textColor = .black
         authorLabel.textAlignment = .center
         authorLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -41,12 +42,13 @@ final class FavoritePhotoCell: UICollectionViewCell {
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            authorLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 10),
+            authorLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: authorLabelPadding),
             authorLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         imageView.image = nil
         authorLabel.text = nil
     }

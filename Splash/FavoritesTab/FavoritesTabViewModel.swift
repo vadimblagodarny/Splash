@@ -22,14 +22,17 @@ final class FavoritesTabViewModel: FavoritesTabViewModelProtocol {
     }
     
     func fetchFavoritePhotos() {
+        let endpoint = GlobalConstants.Endpoints.onePhotoURL
         let favoritePhotoIDs = FavoritesManager.shared.getFavoritePhotoIDs()
         
         let dispatchGroup = DispatchGroup()
         var photos: [UnsplashPhoto] = []
-        
+                
         for id in favoritePhotoIDs {
+            let urlString = "\(endpoint)/\(id)?client_id=\(GlobalConstants.Security.accessKey)"
+
             dispatchGroup.enter()
-            networkManager.fetchPhoto(byID: id) { result in
+            networkManager.fetchPhoto(from: urlString, byID: id) { result in
                 switch result {
                 case .success(let photo):
                     photos.append(photo)

@@ -25,37 +25,37 @@ final class RandomTabViewModel: RandomTabViewModelProtocol {
     }
     
     func fetchRandomPhotos() {
-            let url = "https://api.unsplash.com/photos/random"
-            let parameters: Parameters = ["count": 50]
-            let headers: HTTPHeaders = ["Authorization": "Client-ID sbEOclMPtGfq1goiFNrbsRqdW7QGu5jmuVWuBBbl5ag"]
-            
-            networkManager.request(url: url, method: .get, parameters: parameters, headers: headers) { [weak self] (result: Result<[UnsplashPhoto], AFError>) in
-                switch result {
-                case .success(let photos):
-                    self?.photos.value = photos
-                case .failure(let error):
-                    self?.error.value = error.localizedDescription
-                }
+        let url = GlobalConstants.Endpoints.randomURL
+        let parameters: Parameters = ["count": 50]
+        let headers: HTTPHeaders = ["Authorization": "Client-ID \(GlobalConstants.Security.accessKey)"]
+        
+        networkManager.request(url: url, method: .get, parameters: parameters, headers: headers) { [weak self] (result: Result<[UnsplashPhoto], AFError>) in
+            switch result {
+            case .success(let photos):
+                self?.photos.value = photos
+            case .failure(let error):
+                self?.error.value = error.localizedDescription
             }
         }
+    }
     
     func searchPhotos(query: String) {
-            guard !query.isEmpty else {
-                photos.value = []
-                return
-            }
-            
-            let url = "https://api.unsplash.com/search/photos"
-            let parameters: Parameters = ["query": query, "per_page": 30]
-            let headers: HTTPHeaders = ["Authorization": "Client-ID sbEOclMPtGfq1goiFNrbsRqdW7QGu5jmuVWuBBbl5ag"]
-            
-            networkManager.request(url: url, method: .get, parameters: parameters, headers: headers) { [weak self] (result: Result<PhotoSearchResult, AFError>) in
-                switch result {
-                case .success(let searchResult):
-                    self?.photos.value = searchResult.results
-                case .failure(let error):
-                    self?.error.value = error.localizedDescription
-                }
+        guard !query.isEmpty else {
+            photos.value = []
+            return
+        }
+        
+        let url = GlobalConstants.Endpoints.searchURL
+        let parameters: Parameters = ["query": query, "per_page": 50]
+        let headers: HTTPHeaders = ["Authorization": "Client-ID \(GlobalConstants.Security.accessKey)"]
+        
+        networkManager.request(url: url, method: .get, parameters: parameters, headers: headers) { [weak self] (result: Result<PhotoSearchResult, AFError>) in
+            switch result {
+            case .success(let searchResult):
+                self?.photos.value = searchResult.results
+            case .failure(let error):
+                self?.error.value = error.localizedDescription
             }
         }
+    }
 }

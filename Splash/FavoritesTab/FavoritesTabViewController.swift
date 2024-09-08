@@ -7,15 +7,21 @@
 
 import UIKit
 
+private enum Constants {
+    static let cellId = "FavoritePhotoCell"
+    static let collectionViewSpacing: CGFloat = 10
+    static let itemsInRow: CGFloat = 2
+}
+
 final class FavoritesTabViewController: UIViewController {
     private let viewModel: FavoritesTabViewModel
     
     private let collectionView: UICollectionView = {
-        let itemSize = ((UIScreen.main.bounds.width - 40) / 2) - 10
+        let itemSize = ((UIScreen.main.bounds.width - GlobalConstants.Sizes.screenPadding * 2) / Constants.itemsInRow) - Constants.collectionViewSpacing
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = Constants.collectionViewSpacing
+        layout.minimumInteritemSpacing = Constants.collectionViewSpacing
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -54,17 +60,21 @@ final class FavoritesTabViewController: UIViewController {
         
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
-        collectionView.register(FavoritePhotoCell.self, forCellWithReuseIdentifier: "FavoritePhotoCell")
+        collectionView.register(FavoritePhotoCell.self, forCellWithReuseIdentifier: Constants.cellId)
         collectionView.delegate = self
         collectionView.dataSource = self
         
         view.addSubview(collectionView)
         
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
+                                                constant: GlobalConstants.Sizes.screenPadding),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+                                                    constant: GlobalConstants.Sizes.screenPadding),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor,
+                                                     constant: -GlobalConstants.Sizes.screenPadding),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                                                   constant: -GlobalConstants.Sizes.screenPadding)
         ])
     }
     
@@ -81,7 +91,7 @@ extension FavoritesTabViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FavoritePhotoCell", for: indexPath) as! FavoritePhotoCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellId, for: indexPath) as! FavoritePhotoCell
         let photo = viewModel.favoritePhotos.value[indexPath.item]
         cell.configure(with: photo)
         return cell
