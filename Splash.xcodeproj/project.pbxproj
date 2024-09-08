@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		82F7D6FA6ECCD9114CE8BD7D /* Pods_Splash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDF5EC2D6E1254F22B1FD298 /* Pods_Splash.framework */; };
 		DD78B2C02C8CE416009EC7B6 /* GlobalConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD78B2BF2C8CE416009EC7B6 /* GlobalConstants.swift */; };
+		DD78B2C22C8D9613009EC7B6 /* CustomAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD78B2C12C8D9613009EC7B6 /* CustomAlert.swift */; };
 		DDA3C2F52C8A99CB0004638C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA3C2F42C8A99CB0004638C /* AppDelegate.swift */; };
 		DDA3C2F72C8A99CB0004638C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDA3C2F62C8A99CB0004638C /* SceneDelegate.swift */; };
 		DDA3C2FE2C8A99CC0004638C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDA3C2FD2C8A99CC0004638C /* Assets.xcassets */; };
@@ -34,6 +35,7 @@
 		B29AF421726681865E4FE1A3 /* Pods-Splash.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Splash.debug.xcconfig"; path = "Target Support Files/Pods-Splash/Pods-Splash.debug.xcconfig"; sourceTree = "<group>"; };
 		BDF5EC2D6E1254F22B1FD298 /* Pods_Splash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Splash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD78B2BF2C8CE416009EC7B6 /* GlobalConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConstants.swift; sourceTree = "<group>"; };
+		DD78B2C12C8D9613009EC7B6 /* CustomAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomAlert.swift; sourceTree = "<group>"; };
 		DDA3C2F12C8A99CB0004638C /* Splash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Splash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDA3C2F42C8A99CB0004638C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DDA3C2F62C8A99CB0004638C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				DDB933602C8C8B4C00B22678 /* FavoritesManager.swift */,
 				DDB933622C8C8FEC00B22678 /* NetworkError.swift */,
 				DD78B2BF2C8CE416009EC7B6 /* GlobalConstants.swift */,
+				DD78B2C12C8D9613009EC7B6 /* CustomAlert.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD78B2C22C8D9613009EC7B6 /* CustomAlert.swift in Sources */,
 				DDA3C3112C8C22150004638C /* DetailsViewController.swift in Sources */,
 				DD78B2C02C8CE416009EC7B6 /* GlobalConstants.swift in Sources */,
 				DDA3C3122C8C22150004638C /* DetailsViewModel.swift in Sources */,

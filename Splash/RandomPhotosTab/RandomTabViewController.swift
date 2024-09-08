@@ -64,8 +64,11 @@ final class RandomTabViewController: UIViewController {
         }
         
         viewModel.error.bind { [weak self] errorMessage in
-            guard let errorMessage = errorMessage else { return }
-            print("Error: \(errorMessage)") // MARK: there can be alert
+            guard let self else { return }
+            guard let errorMessage else { return }
+            CustomAlert.showErrorAlert(on: self,
+                                       message: errorMessage,
+                                       retryHandler: self.viewModel.fetchRandomPhotos)
         }
     }
     

@@ -9,16 +9,17 @@ import Foundation
 
 protocol FavoritesTabViewModelProtocol: AnyObject {
     var favoritePhotos: Bindable<[UnsplashPhoto]> { get }
+    var error: Bindable<String?> { get }
     func fetchFavoritePhotos()
 }
 
 final class FavoritesTabViewModel: FavoritesTabViewModelProtocol {
     var favoritePhotos: Bindable<[UnsplashPhoto]> = Bindable([])
+    var error: Bindable<String?> = Bindable(nil)
     private let networkManager: NetworkManagerProtocol
     
     init(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
-        fetchFavoritePhotos()
     }
     
     func fetchFavoritePhotos() {
@@ -32,12 +33,12 @@ final class FavoritesTabViewModel: FavoritesTabViewModelProtocol {
             let urlString = "\(endpoint)/\(id)?client_id=\(GlobalConstants.Security.accessKey)"
 
             dispatchGroup.enter()
-            networkManager.fetchPhoto(from: urlString, byID: id) { result in
+            networkManager.fetchPhoto(from: urlString, byID: id) { [weak self] result in
                 switch result {
                 case .success(let photo):
                     photos.append(photo)
                 case .failure(let error):
-                    print("Failed to fetch photo: \(error.localizedDescription)")
+                    self?.error.value = error.localizedDescription
                 }
                 dispatchGroup.leave()
             }

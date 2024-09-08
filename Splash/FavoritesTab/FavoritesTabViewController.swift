@@ -53,6 +53,14 @@ final class FavoritesTabViewController: UIViewController {
         viewModel.favoritePhotos.bind { [weak self] _ in
             self?.collectionView.reloadData()
         }
+        
+        viewModel.error.bind { [weak self] errorMessage in
+            guard let self else { return }
+            guard let errorMessage else { return }
+            CustomAlert.showErrorAlert(on: self,
+                                       message: errorMessage,
+                                       retryHandler: self.viewModel.fetchFavoritePhotos)
+        }
     }
 
     private func setupUI() {
