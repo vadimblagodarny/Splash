@@ -7,11 +7,33 @@
 
 import UIKit
 
+private enum Constants {
+    static let buttonImage = UIImage(systemName: "xmark.circle.fill")
+    static let buttonScaleFactor: CGFloat = 2.0
+    static let buttonSize: CGFloat = 48.0
+    static let buttonPadding: CGFloat = 8.0
+    static let authorLabelPadding: CGFloat = 10
+}
+
 final class FavoritePhotoCell: UICollectionViewCell {
     private let imageView = UIImageView()
     private let authorLabel = UILabel()
-    private let authorLabelPadding: CGFloat = 10
     
+    private let deleteButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(Constants.buttonImage, for: .normal)
+        button.transform = CGAffineTransform(scaleX: Constants.buttonScaleFactor,
+                                             y: Constants.buttonScaleFactor)
+        button.contentMode = .scaleAspectFill
+        button.tintColor = .red
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
+    
+    var deleteAction: (() -> Void)?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -35,6 +57,7 @@ final class FavoritePhotoCell: UICollectionViewCell {
         
         contentView.addSubview(imageView)
         contentView.addSubview(authorLabel)
+        contentView.addSubview(deleteButton)
         
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -42,8 +65,15 @@ final class FavoritePhotoCell: UICollectionViewCell {
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            authorLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: authorLabelPadding),
+            authorLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor,
+                                             constant: Constants.authorLabelPadding),
             authorLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            deleteButton.topAnchor.constraint(equalTo: contentView.topAnchor,
+                                              constant: Constants.buttonPadding),
+            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
+                                                   constant: -Constants.buttonPadding),
+            deleteButton.widthAnchor.constraint(equalToConstant: Constants.buttonSize),
+            deleteButton.heightAnchor.constraint(equalToConstant: Constants.buttonSize)
         ])
     }
     
@@ -53,8 +83,9 @@ final class FavoritePhotoCell: UICollectionViewCell {
         authorLabel.text = nil
     }
     
-    func configure(with photo: UnsplashPhoto) {
+    func configure(with photo: UnsplashPhoto, isEditing: Bool) {
         authorLabel.text = photo.user.name
+        deleteButton.isHidden = !isEditing
         
         let networkManager = NetworkManager()
         networkManager.fetchImage(from: photo.urls.small) { [weak self] result in
@@ -68,4 +99,8 @@ final class FavoritePhotoCell: UICollectionViewCell {
             }
         }
     }
+    
+    @objc private func deleteButtonTapped() {
+            deleteAction?()
+        }
 }

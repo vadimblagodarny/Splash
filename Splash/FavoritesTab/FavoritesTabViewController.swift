@@ -11,6 +11,8 @@ private enum Constants {
     static let cellId = "FavoritePhotoCell"
     static let collectionViewSpacing: CGFloat = 10
     static let itemsInRow: CGFloat = 2
+    static let editEditTitle = "Edit"
+    static let editDoneTitle = "Done"
 }
 
 final class FavoritesTabViewController: UIViewController {
@@ -62,9 +64,13 @@ final class FavoritesTabViewController: UIViewController {
                                        retryHandler: self.viewModel.fetchFavoritePhotos)
         }
     }
-
+    
     private func setupUI() {
         view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: Constants.editEditTitle,
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(toggleEditMode))
         
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
@@ -90,7 +96,12 @@ final class FavoritesTabViewController: UIViewController {
         viewModel.fetchFavoritePhotos()
         refreshControl.endRefreshing()
     }
-
+    
+    @objc private func toggleEditMode() {
+        collectionView.isEditing.toggle()
+        navigationItem.rightBarButtonItem?.title = collectionView.isEditing ? Constants.editDoneTitle : Constants.editEditTitle
+        collectionView.reloadData()
+    }
 }
 
 extension FavoritesTabViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -101,10 +112,14 @@ extension FavoritesTabViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellId, for: indexPath) as! FavoritePhotoCell
         let photo = viewModel.favoritePhotos.value[indexPath.item]
-        cell.configure(with: photo)
+        cell.configure(with: photo, isEditing: collectionView.isEditing)
+        cell.deleteAction = { [weak self] in
+            FavoritesManager.shared.removeFavoritePhotoID(photo.id)
+            self?.viewModel.fetchFavoritePhotos()
+        }
         return cell
     }
-        
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photo = viewModel.favoritePhotos.value[indexPath.item]
         let detailsVC = Builder().createDetailsVC(photo: photo)
