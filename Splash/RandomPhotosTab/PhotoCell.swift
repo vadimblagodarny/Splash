@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 final class PhotoCell: UICollectionViewCell {
     private let imageView: UIImageView = {
@@ -17,6 +18,8 @@ final class PhotoCell: UICollectionViewCell {
         imageView.backgroundColor = .systemGray5
         return imageView
     }()
+    
+    private var currentImageRequest: DataRequest?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,15 +39,20 @@ final class PhotoCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        currentImageRequest?.cancel()
+        currentImageRequest = nil
     }
     
     func configure(with photo: UnsplashPhoto) {
+        currentImageRequest?.cancel()
         let networkManager = NetworkManager()
-        networkManager.fetchImage(from: photo.urls.small) { [weak self] result in
+        
+        currentImageRequest = networkManager.fetchImage(from: photo.urls.small) { [weak self] result in
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
                 case .success(let image):
-                    self?.imageView.image = image
+                    self.imageView.image = image
                 case .failure(let error):
                     print("Failed to load image: \(error.localizedDescription)")
                 }

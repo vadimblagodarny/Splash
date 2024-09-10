@@ -55,7 +55,7 @@ final class RandomTabViewController: UIViewController {
         addViews()
         setupViews()
         setupConstraints()
-        viewModel.fetchRandomPhotos()
+        viewModel.fetchRandomPhotos(reset: true)
     }
     
     private func setupBindings() {
@@ -64,11 +64,16 @@ final class RandomTabViewController: UIViewController {
         }
         
         viewModel.error.bind { [weak self] errorMessage in
-            guard let self else { return }
-            guard let errorMessage else { return }
+            guard let self = self, let errorMessage = errorMessage else { return }
             CustomAlert.showErrorAlert(on: self,
                                        message: errorMessage,
-                                       retryHandler: self.viewModel.fetchRandomPhotos)
+                                       retryHandler: {
+                                           if let query = self.viewModel.currentQuery, !query.isEmpty {
+                                               self.viewModel.searchPhotos(query: query, reset: true)
+                                           } else {
+                                               self.viewModel.fetchRandomPhotos(reset: true)
+                                           }
+                                       })
         }
     }
     
@@ -101,7 +106,11 @@ final class RandomTabViewController: UIViewController {
     }
     
     @objc private func handleRefresh() {
-        viewModel.fetchRandomPhotos()
+        if let query = viewModel.currentQuery, !query.isEmpty {
+            viewModel.searchPhotos(query: query, reset: true)
+        } else {
+            viewModel.fetchRandomPhotos(reset: true)
+        }
         refreshControl.endRefreshing()
     }
 }
@@ -109,19 +118,19 @@ final class RandomTabViewController: UIViewController {
 extension RandomTabViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let query = searchBar.text, !query.isEmpty else { return }
-        viewModel.searchPhotos(query: query)
+        viewModel.searchPhotos(query: query, reset: true)
         searchBar.resignFirstResponder()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = String()
         searchBar.resignFirstResponder()
-        viewModel.fetchRandomPhotos()
+        viewModel.fetchRandomPhotos(reset: true)
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText.isEmpty {
-            viewModel.fetchRandomPhotos()
+            viewModel.fetchRandomPhotos(reset: true)
         }
     }
 }
@@ -142,5 +151,19 @@ extension RandomTabViewController: UICollectionViewDelegate, UICollectionViewDat
         let photo = viewModel.photos.value[indexPath.item]
         let detailsVC = Builder().createDetailsVC(photo: photo)
         navigationController?.pushViewController(detailsVC, animated: true)
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+
+        if offsetY > contentHeight - height - 100 {
+            if let query = viewModel.currentQuery, !query.isEmpty {
+                viewModel.searchPhotos(query: query, reset: false)
+            } else {
+                viewModel.fetchRandomPhotos(reset: false)
+            }
+        }
     }
 }

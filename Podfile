@@ -8,5 +8,6 @@ target 'Splash' do
   # Pods for Splash
 
 pod 'Alamofire'
+pod 'AlamofireImage'
 
 end

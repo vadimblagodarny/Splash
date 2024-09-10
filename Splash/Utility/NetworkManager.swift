@@ -6,6 +6,7 @@
 //
 
 import Alamofire
+import AlamofireImage
 
 protocol NetworkManagerProtocol {
     func request<T: Decodable>(
@@ -16,7 +17,7 @@ protocol NetworkManagerProtocol {
         completion: @escaping (Result<T, AFError>) -> Void
     )
     
-    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void)
+    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) -> DataRequest?
     func fetchPhoto(from urlString: String, byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void)
 }
 
@@ -45,21 +46,24 @@ class NetworkManager: NetworkManagerProtocol {
                 }
             }
     }
-    
-    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) {
-        AF.request(urlString).responseData { response in
-            switch response.result {
-            case .success(let data):
-                if let image = UIImage(data: data) {
-                    completion(.success(image))
-                } else {
-                    completion(.failure(NetworkError.invalidData))
-                }
-            case .failure(let error):
-                completion(.failure(error))
+        
+    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, Error>) -> Void) -> DataRequest? {
+            guard let imageUrl = URL(string: urlString) else {
+                completion(.failure(NetworkError.invalidURL))
+                return nil
             }
+            
+            let request = AF.request(imageUrl).responseImage { response in
+                switch response.result {
+                case .success(let image):
+                    completion(.success(image))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        
+            return request
         }
-    }
     
     func fetchPhoto(from urlString: String, byID id: String, completion: @escaping (Result<UnsplashPhoto, Error>) -> Void) {
         AF.request(urlString).responseDecodable(of: UnsplashPhoto.self) { response in
